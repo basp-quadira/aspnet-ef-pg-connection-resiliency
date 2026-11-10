@@ -45,14 +45,15 @@ builder
             connectionString,
             pg =>
             {
-                pg.EnableRetryOnFailure(
-                    maxRetryCount: builder
+                var maxRetryCount = builder.Configuration.RetryMaxRetryCount();
+                var maxRetryDelay = TimeSpan.FromSeconds(
+                    builder
                         .Configuration
-                        .RetryMaxRetryCount(),
-                    maxRetryDelay: TimeSpan.FromSeconds(
-                        builder
-                            .Configuration
-                            .RetryMaxRetryDelaySeconds()),
+                        .RetryMaxRetryDelaySeconds());
+
+                pg.EnableRetryOnFailure(
+                    maxRetryCount: maxRetryCount,
+                    maxRetryDelay: maxRetryDelay,
                     errorCodesToAdd: null);
             });
         
@@ -62,9 +63,9 @@ builder
 builder
     .Services
     .AddHealthChecks()
-    .AddDbContextCheck<FooContext>(
-        customTestQuery: (context, token) => 
-            context.Database.CanConnectAsync(token))
+    .AddDbContextCheck<FooContext>()
+        //customTestQuery: (context, token) => 
+        //    context.Database.CanConnectAsync(token))
     .AddCheck<FooHealthCheck>("foo");
 
 var app = builder
