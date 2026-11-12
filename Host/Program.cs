@@ -88,8 +88,8 @@ app.MapPost(
     async (FooContext db, Item item) =>
     {
         item.Id = Guid.NewGuid();
-        await db.Items.AddAsync(item);
         await db.SaveChangesAsync();
+        await db.Items.AddAsync(item);
         return Results.Created($"/items/{item.Id}", item);
     });
 
