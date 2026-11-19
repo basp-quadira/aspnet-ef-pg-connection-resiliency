@@ -57,7 +57,7 @@ builder
                     errorCodesToAdd: null);
             });
         
-        ef.AddInterceptors(interceptors);
+        // ef.AddInterceptors(interceptors);
     });
 
 builder
@@ -70,6 +70,8 @@ builder
 
 var app = builder
     .Build();
+
+
 
 app.MapHealthChecks("/health"); 
 
@@ -88,8 +90,8 @@ app.MapPost(
     async (FooContext db, Item item) =>
     {
         item.Id = Guid.NewGuid();
-        await db.SaveChangesAsync();
         await db.Items.AddAsync(item);
+        await db.SaveChangesAsync();
         return Results.Created($"/items/{item.Id}", item);
     });
 
